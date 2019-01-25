@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile
-OBJS = 05.cpp
+OBJS = 06.cpp
 
 #CC specifies the compiler
 CC = g++
@@ -14,7 +14,7 @@ LIBRARY_PATHS = -LC:\mingw_dev_lib\lib
 COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
 #LINKER_FLAGS specifies libraries that we are linking against
-LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2
+LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 
 #OBJ_NAME specifies the name of the executable
 OBJ_NAME = a.out
