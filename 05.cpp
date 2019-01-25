@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <stdio.h>
+#include <string>
 
 //Screen dimensions
 const int SCREEN_WIDTH = 640;
@@ -14,6 +15,9 @@ bool loadMedia();
 //Closes the window
 void close();
 
+//Loads individual surfaces
+SDL_Surface* loadSurface(std::string);
+
 //We will render to this window
 SDL_Window* gWindow = NULL;
 
@@ -21,7 +25,7 @@ SDL_Window* gWindow = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
 //The image will be contained here
-SDL_Surface* gXOut = NULL;
+SDL_Surface* gStretchedSurface = NULL;
 
 bool init()
 {
@@ -59,8 +63,8 @@ bool load_media()
 	bool success = true;
 
 	//Load splash image
-	gXOut = SDL_LoadBMP("images/x.bmp");
-	if(gXOut == NULL)
+	gStretchedSurface = loadSurface("images/stretch.bmp");
+	if(gStretchedSurface == NULL)
 	{
 		printf("Unable to load image: %s\n", SDL_GetError());
 		success = false;
@@ -71,8 +75,8 @@ bool load_media()
 void close()
 {
 	//Deallocate surface
-	SDL_FreeSurface(gXOut);
-	gXOut = NULL;
+	SDL_FreeSurface(gStretchedSurface);
+	gStretchedSurface = NULL;
 
 	//Destroy window
 	SDL_DestroyWindow(gWindow);
@@ -81,6 +85,33 @@ void close()
 	//Quit SDL subsystems
 	SDL_Quit();
 }
+
+SDL_Surface* loadSurface(std::string path)
+{
+	//The final optimized image
+	SDL_Surface* optimizedSurface = NULL;
+
+	//Load image at specified path
+	SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
+	if(loadedSurface == NULL)
+	{
+		printf("Unable to load image %s, SDL ERROR: %s\n", path.c_str(), SDL_GetError());
+	}
+	else
+	{
+		//Convert surface to screen format
+		optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, NULL);
+		if(optimizedSurface == NULL)
+		{
+			printf("Unable to optimize surface, SDL Error: %s\n", SDL_GetError());
+		}
+		//Get rid of the old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
+
+	return optimizedSurface;
+}
+
 
 int main(int argc, char* args[])
 {
@@ -99,7 +130,7 @@ int main(int argc, char* args[])
 		else
 		{
 			//Apply the image
-			SDL_BlitSurface(gXOut, NULL, gScreenSurface, NULL);
+			SDL_BlitSurface(gStretchedSurface, NULL, gScreenSurface, NULL);
 
 			//Update the surface
 			SDL_UpdateWindowSurface(gWindow);
@@ -123,8 +154,13 @@ int main(int argc, char* args[])
 					}
 				}
 
-				//Apply the image
-				SDL_BlitSurface(gXOut, NULL, gScreenSurface, NULL);
+				//Apply the image stretched
+				SDL_Rect stretchRect;
+				stretchRect.x = 0;
+				stretchRect.y = 0;
+				stretchRect.w = SCREEN_WIDTH;
+				stretchRect.h = SCREEN_HEIGHT;
+				SDL_BlitScaled(gStretchedSurface, NULL, gScreenSurface, &stretchRect);
 
 				//Update the surface
 				SDL_UpdateWindowSurface(gWindow);

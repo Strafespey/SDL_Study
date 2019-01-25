@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile
-OBJS = 04_key_presses.cpp
+OBJS = 05.cpp
 
 #CC specifies the compiler
 CC = g++
