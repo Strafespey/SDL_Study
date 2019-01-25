@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile
-OBJS = 06.cpp
+OBJS = 07.cpp
 
 #CC specifies the compiler
 CC = g++
