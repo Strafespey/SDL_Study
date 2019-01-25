@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile
-OBJS = 07.cpp
+OBJS = 08_geometry_rendering.cpp
 
 #CC specifies the compiler
 CC = g++
